@@ -4,6 +4,8 @@
     'name': 'Student Registration',
     'summary': 'Manage Student Registration',
     'version': '1.0',
+    'author': 'Youssef Mohamed',
+
     'depends': ['base','crm','account',],
     'data': [
         'security/security.xml',
@@ -18,5 +20,6 @@
     'auto_install': True,
     'application': True,
     'sequence': 1,
-    # 'license': 'LGPL-3',
+    'license': 'LGPL-3',
+
 }

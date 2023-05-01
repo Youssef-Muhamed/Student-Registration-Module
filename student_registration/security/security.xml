@@ -1,10 +1,8 @@
 <odoo>
     <data>
-
         <record model="res.groups" id="group_registration_manager">
             <field name="name">Registration Manager</field>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
-
     </data>
 </odoo>

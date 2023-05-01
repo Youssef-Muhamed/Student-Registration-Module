@@ -13,41 +13,12 @@
             action="action_student_registration"
             sequence="10"/>
 
-<!--        <menuitem id="menu_partner_is_student"-->
-<!--          name="Students"-->
-<!--          parent="menu_student_registration"-->
-<!--          action=""-->
-<!--          sequence="20" />-->
+        <menuitem id="menu_partner_is_student"
+          name="Students"
+          parent="menu_student_registration_root"
+          action="action_partner_is_student"
+          sequence="20" />
 
-
-<!-- Students submenu -->
-<!--<menuitem id="menu_partner_is_student"-->
-<!--    name="Students"-->
-<!--    parent="menu_student_registration"-->
-<!--    action="action_partner_is_student"-->
-<!--    sequence="20" />-->
-
-
-
-
-
-
-
-        <!--<record id="action_open_student_invoice" model="ir.actions.act_window">-->
-<!--    <field name="name">Student Invoice</field>-->
-<!--&lt;!&ndash;    <field name="type">ir.actions.act_window</field>&ndash;&gt;-->
-<!--    <field name="res_model">account.move</field>-->
-<!--    <field name="view_mode">tree,form</field>-->
-<!--&lt;!&ndash;    <field name="domain">[('invoice_origin','=',active_id)]</field>&ndash;&gt;-->
-<!--&lt;!&ndash;    <field name="context">{'default_partner_id': record.student_id.id}</field>&ndash;&gt;-->
-<!--&lt;!&ndash;    <field name="search_view_id" ref="account.view_move_search"/>&ndash;&gt;-->
-<!--&lt;!&ndash;    <field name="help" type="html">&ndash;&gt;-->
-<!--&lt;!&ndash;        <p class="oe_view_nocontent_create">&ndash;&gt;-->
-<!--&lt;!&ndash;            Click here to create a new invoice.&ndash;&gt;-->
-<!--&lt;!&ndash;        </p>&ndash;&gt;-->
-<!--&lt;!&ndash;    </field>&ndash;&gt;-->
-<!--</record>-->
-<!--                     <button name="%(action_open_student_invoice)d" string="Student Invoice" type="action"/>-->
 
 
     </data>

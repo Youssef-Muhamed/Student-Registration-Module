@@ -26,8 +26,7 @@ class StudentRegistration(models.Model):
     ], string='Status', default='draft')
     product_id = fields.Many2one('product.product', string='Product')
 
-    # registration_invoice_id = fields.Many2one('account.invoice', string='Registration Invoice', readonly=True)
-    invoice_id = fields.Many2one('account.invoice', string='Invoice', readonly=True, copy=False)
+    invoice_id = fields.Many2one('account.move', string='Invoice', readonly=True, copy=False)
 
     @api.depends('birth_date')
     def _compute_age(self):
@@ -36,18 +35,6 @@ class StudentRegistration(models.Model):
                 record.age = datetime.datetime.now().year - record.birth_date.year
             else:
                 record.age = 0
-
-
-    # @api.onchange('student_id')
-    # def _onchange_student_id(self):
-    #     if self.student_id and not self.student_id.is_student:
-    #         self.student_id = False
-    #         return {
-    #             'warning': {
-    #                 'title': _('Warning'),
-    #                 'message': _('Selected partner is not a student. Please select a student.')
-    #             }
-    #         }
 
     @api.model
     def create(self, vals):
@@ -61,98 +48,43 @@ class StudentRegistration(models.Model):
     def cancel_registration(self):
         self.write({'state': 'canceled'})
 
-    # def create_registration_invoice(self):
-    #     invoice = self.env['account.invoice'].create({
-    #         'partner_id': self.student_id.id,
-    #         'currency_id': self.currency_id.id,
-    #         'invoice_date': self.date,
-    #         'type': 'out_invoice',
-    #         'invoice_line_ids': [(0, 0, {
-    #             'name': 'Registration Fees',
-    #             'price_unit': self.amount,
-    #             'quantity': 1,
-    #             'account_id': self.env['ir.config_parameter'].sudo().get_param('registration.reg_fees_account_id'),
-    #         })]
-    #     })
-    #     self.write({'registration_invoice_id': invoice.id, 'state': 'invoiced'})
-    #     return {
-    #         'name': _('Registration Invoice'),
-    #         'type': 'ir.actions.act_window',
-    #         'res_model': 'account.invoice',
-    #         'res_id': invoice.id,
-    #         'view_mode': 'form',
-    #         'context': {'default_type': 'out_invoice'},
-    #         'target': 'current',
-    #     }
-    #
+    def set_to_draft(self):
+        self.write({'state': 'draft'})
 
-    # @api.multi
-    # def create_invoice(self):
-    #     # self.env['ir.model.data'].create({
-    #     #     'name': 'my_module.registration_product',
-    #     #     'module': 'my_module',
-    #     #     'model': 'product.product',
-    #     #     'res_id': product_id.id,
-    #     # })
-    #     # product = self.env.ref('my_module.registration_product')
-    #
-    #     # Create invoice data
-    #     invoice_data = {
-    #         'partner_id': self.student_id.id,
-    #         'currency_id': self.currency_id.id,
-    #         'invoice_line_ids': [(0, 0, {
-    #             'name': 'Registration Fees',
-    #             'price_unit': self.amount,
-    #             'quantity': 1,
-    #             'product_id': self.product_id.id,
-    #         })],
-    #         'registration_id': self.id,
-    #     }
-    #
-    #     # Create invoice
-    #     invoice = self.env['account.move'].create(invoice_data)
-    #
-    #     # Link invoice to registration
-    #     self.invoice_id = invoice.id
-    #
-    #     # Change registration state to invoiced
-    #     self.state = 'invoiced'
-
-    # @api.multi
     def create_invoice(self):
-        # Get the account for registration fees
-        account_id = self.env['ir.config_parameter'].sudo().get_param('registration.reg_fees_account_id')
-
-        # Create the invoice line
-        invoice_line = self.env['account.move.line'].new({
-            'name': 'Registration Fees',
-            'price_unit': self.amount,
-            'quantity': 1,
-            'product_id': self.product_id.id,
-            'account_id': account_id,
-        })
-
-        # Create the invoice
-        invoice = self.env['account.move'].create({
+        invoice_obj = self.env['account.move']
+        invoice_vals = {
             'partner_id': self.student_id.id,
-            'currency_id': self.currency_id.id,
-            'invoice_line_ids': [(0, 0, invoice_line._convert_to_write(invoice_line._cache))],
+            'invoice_date': fields.Date.today(),
             'registration_id': self.id,
-        })
-
-        # Link the invoice to the registration
+            'currency_id': self.currency_id.id,
+            # 'type': 'out_invoice',
+            'invoice_line_ids': [(0, 0, {
+                'name': 'Registration Fees',
+                'quantity': 1,
+                'price_unit': self.amount,
+                'account_id': self.student_id.property_account_receivable_id.id,
+            })],
+        }
+        invoice = invoice_obj.create(invoice_vals)
         self.invoice_id = invoice.id
-
-        # Change the registration state to invoiced
         self.state = 'invoiced'
-
-    @api.model_create_multi
-    def open_invoice(self):
         return {
-            'name': 'Invoice',
-            'type': 'ir.actions.act_window',
-            'res_model': 'account.invoice',
+            'name': _('Invoice'),
             'view_type': 'form',
             'view_mode': 'form',
-            'res_id': self.invoice_id.id,
+            'res_model': 'account.move',
+            'res_id': invoice.id,
+            'type': 'ir.actions.act_window',
+            'target': 'current',
+        }
+
+    def action_open_invoice(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Invoices'),
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'domain': [('partner_id', '=', self.student_id.id)],
+            'target': 'current'
         }
