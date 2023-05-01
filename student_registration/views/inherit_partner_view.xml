@@ -4,10 +4,10 @@
         <record id="inherit_partner_form" model="ir.ui.view">
             <field name="name">inherit crm name</field>
             <field name="model">res.partner</field>
-            <field name="inherit_id" ref="base.view_partner_form" />
+            <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
 
-                 <field name="vat" position="after">
+                <field name="vat" position="after">
                     <field name="is_student"/>
                     <field name="birth_date"/>
                 </field>
@@ -15,7 +15,7 @@
             </field>
         </record>
 
-         <record id="action_partner_is_student" model="ir.actions.act_window">
+        <record id="action_partner_is_student" model="ir.actions.act_window">
             <field name="name">Is Student</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">tree,form</field>

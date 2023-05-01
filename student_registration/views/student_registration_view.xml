@@ -25,7 +25,7 @@
                             attrs="{'invisible': [('state', 'in', ['confirmed', 'invoiced', 'canceled'])]}" />
                     <button name="set_to_draft" string="Set To Draft" type="object"
                             attrs="{'invisible': [('state', 'in', ['draft'])]}" />
-                      <button name="create_invoice" string="Create Invoice" type="object" states="confirmed"/>
+                      <button name="create_invoice" string="Create Invoice" type="object"  states="confirmed"/>
                       <button name="action_open_invoice" string="View Invoices" type="object"/>
                      <field name="state" widget="statusbar" statusbar_visible="draft,confirmed" />
                 </header>

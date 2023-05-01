@@ -1,13 +1,15 @@
-from odoo import models, fields,api,_
+from odoo import models, fields, api, _
 import datetime
 from odoo.exceptions import ValidationError
+
 
 class StudentRegistration(models.Model):
     _name = 'student.registration'
     _description = 'Student Registration'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name = fields.Char(string='Name', default=lambda self: self.env['ir.sequence'].next_by_code('student.registration') or _('New'))
+    name = fields.Char(string='Name',
+                       default=lambda self: self.env['ir.sequence'].next_by_code('student.registration') or _('New'))
     student_id = fields.Many2one('res.partner', string='Student', domain=[('is_student', '=', True)], required=True,
                                  default=lambda self: self.env['res.partner'].search([('is_student', '=', True)],
                                                                                      limit=1))
